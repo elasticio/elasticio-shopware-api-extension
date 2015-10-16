@@ -40,7 +40,7 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
 
     public function install()
     {
-        $this->subscribeForApiEvents();
+        $this->subscribeEvents();
         return true;
     }
 
@@ -57,7 +57,7 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
     /**
      * Registers all necessary events and hooks for ArticlePrices API
      */
-    private function subscribeForApiEvents()
+    private function subscribeEvents()
     {
         $this->subscribeEvent(
             'Enlight_Controller_Front_StartDispatch',
@@ -78,7 +78,7 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
         );
     }
 
-    public function onArticlePricesApiController()
+    public function onGetArticlePricesApiController()
     {
         return $this->Path() . 'Controllers/Api/ArticlePrices.php';
     }

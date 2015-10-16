@@ -9,7 +9,7 @@ class Shopware_Controllers_Api_ArticlePrices extends Shopware_Controllers_Api_Re
 
     public function init()
     {
-        $this->resource = \Shopware\Components\Api\Manager::getResource('subscriber');
+        $this->resource = \Shopware\Components\Api\Manager::getResource('articlePrice');
     }
 
     /**

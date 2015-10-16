@@ -7,10 +7,8 @@ class ArticlePrice extends Resource
 {
     private function queryBuilder(){
         $builder = Shopware()->Models()->createQueryBuilder();
-        $builder->select(array('address', 'billing.firstName', 'billing.lastName', 'billing.salutation'));
-        $builder->from('Shopware\Models\Newsletter\Address', 'address');
-        $builder->leftJoin('address.customer', 'customer', 'WITH', 'address.isCustomer = true');
-        $builder->leftJoin('customer.billing', 'billing');
+        $builder->select(array('price'));
+        $builder->from('Shopware\Models\Article\Price', 'price');
         return $builder;
     }
 
@@ -21,7 +19,7 @@ class ArticlePrice extends Resource
             $address["firstname"] = $result["firstName"];
             $address["lastname"] = $result["lastName"];
             $address["salutation"] = $result["salutation"];
-            array_push($addresses, $address);
+            array_push($addresses, $result[0]);
         }
         return $addresses;
     }
@@ -50,12 +48,9 @@ class ArticlePrice extends Resource
         //returns the total count of the query
         $totalResult = $paginator->count();
 
-        //returns the Subscriber data
+        //returns the Price data
         $results = $paginator->getIterator()->getArrayCopy();
-        $addresses = $this->flatternResults($results);
 
-        error_log(print_r($addresses, true));
-
-        return array('data' => $addresses, 'offset' => $offset, 'limit' => $limit, 'total' => $totalResult);
+        return array('data' => $results, 'offset' => $offset, 'limit' => $limit, 'total' => $totalResult);
     }
 }
