@@ -68,6 +68,11 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
             'Enlight_Controller_Dispatcher_ControllerPath_Api_ArticlePrices',
             'onGetArticlePricesApiController'
         );
+
+        $this->subscribeEvent(
+            'Enlight_Controller_Dispatcher_ControllerPath_Api_CustomerGroupByKey',
+            'onGetCustomerGroupByKeyApiController'
+        );
     }
 
     public function onFrontStartDispatch(Enlight_Event_EventArgs $args)
@@ -81,5 +86,10 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
     public function onGetArticlePricesApiController()
     {
         return $this->Path() . 'Controllers/Api/ArticlePrices.php';
+    }
+
+    public function onGetCustomerGroupByKeyApiController()
+    {
+        return $this->Path() . 'Controllers/Api/CustomerGroupByKey.php';
     }
 }
