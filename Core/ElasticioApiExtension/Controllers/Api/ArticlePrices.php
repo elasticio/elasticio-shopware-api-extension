@@ -16,6 +16,7 @@ class Shopware_Controllers_Api_ArticlePrices extends Shopware_Controllers_Api_Re
      * Get list of subscribers
      *
      * GET /api/articlePrices/
+     * GET /api/articlePrices?filter[articleId]=117&filter[customerGroupKey]=EN
      */
     public function indexAction()
     {
