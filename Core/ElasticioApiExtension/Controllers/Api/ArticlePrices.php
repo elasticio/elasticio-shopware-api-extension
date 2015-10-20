@@ -59,4 +59,22 @@ class Shopware_Controllers_Api_ArticlePrices extends Shopware_Controllers_Api_Re
         $this->View()->assign(array('success' => true, 'data' => $data));
         $this->Response()->setHeader('Location', $location);
     }
+
+    /**
+     * Update article price by id
+     *
+     * PUT /api/articlePrices/{id}
+     */
+    public function putAction()
+    {
+        $id = $this->Request()->getParam('id');
+        $params = $this->Request()->getPost();
+        $result = $this->resource->update($id, $params);
+        $location = $this->apiBaseUrl . 'articlePrices/' . $result->getId();
+        $data = array(
+            'id'       => $result->getId(),
+            'location' => $location
+        );
+        $this->View()->assign(array('success' => true, 'data' => $data));
+    }
 }

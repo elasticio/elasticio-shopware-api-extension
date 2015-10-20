@@ -5,6 +5,14 @@ use Shopware\Components\Api\Exception as ApiException;
 
 class ArticlePrice extends Resource
 {
+    /**
+    * @return \Shopware\Models\Category\Repository
+    */
+    public function getRepository()
+    {
+        return $this->getManager()->getRepository('Shopware\Models\Article\Price');
+    }
+
     private function queryBuilder(){
         $builder = Shopware()->Models()->createQueryBuilder();
         $builder->select(array('price'));
@@ -23,8 +31,16 @@ class ArticlePrice extends Resource
     {
         $this->checkPrivilege('read');
 
+        $filter = array();
+        foreach ($criteria as $key => $value) {
+            if (strpos($key, 'price.') === false) {
+                $key = "price.{$key}";
+            }
+            $filter[$key] = $value;
+        }
+
         $builder = $this->queryBuilder();
-        $builder->addFilter($criteria);
+        $builder->addFilter($filter);
         $builder->addOrderBy($orderBy);
         $builder->setFirstResult($offset)->setMaxResults($limit);
 
@@ -88,7 +104,7 @@ class ArticlePrice extends Resource
 
         $this->getManager()->persist($articlePrice);
         $this->flush();
-        return $result;
+        return $articlePrice;
     }
 
     /**
@@ -137,10 +153,15 @@ class ArticlePrice extends Resource
             'from' => 1
         );
 
+        // parameters required for creation
         if ($articlePrice === null) {
 
             if (empty($params['articleId'])) {
                 throw new ApiException\CustomValidationException(sprintf("Parameter '%s' is missing", 'articleId'));
+            }
+
+            if (empty($params['articleDetailsId'])) {
+                throw new ApiException\CustomValidationException(sprintf("Parameter '%s' is missing", 'articleDetailsId'));
             }
 
             if (empty($params['customerGroupKey'])) {
@@ -149,6 +170,30 @@ class ArticlePrice extends Resource
 
             if (!isset($params['from'])) {
                 $params['from'] = $defaults['from'];
+            }
+        }
+
+        // find article
+        if (isset($params['articleId'])) {
+            $params['article'] = Shopware()->Models()->find('Shopware\Models\Article\Article', $params['articleId']);
+            if (!$params['article']) {
+                throw new ApiException\CustomValidationException(sprintf("Article by id %s not found", $params['articleId']));
+            }
+        }
+
+        // find detail
+        if (isset($params['articleDetailsId'])) {
+            $params['detail'] = Shopware()->Models()->find('Shopware\Models\Article\Detail', $params['articleDetailsId']);
+            if (!$params['detail']) {
+                throw new ApiException\CustomValidationException(sprintf("Article Detail by id %s not found", $params['articleDetailsId']));
+            }
+        }
+
+        // find customer group
+        if (isset($params['customerGroupKey'])) {
+            $params['customerGroup'] = Shopware()->Models()->getRepository('Shopware\Models\Customer\Group')->findOneBy(array('key' => $params['customerGroupKey']));
+            if (!$params['customerGroup']) {
+                throw new ApiException\CustomValidationException(sprintf("CustomerGroup by key %s not found", $params['customerGroupKey']));
             }
         }
 
