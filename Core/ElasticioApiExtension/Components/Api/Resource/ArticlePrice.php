@@ -12,18 +12,6 @@ class ArticlePrice extends Resource
         return $builder;
     }
 
-    private function flatternResults($results){
-        $addresses = array();
-        foreach($results as $result) {
-            $address = $result[0]; // address is in $result[0]
-            $address["firstname"] = $result["firstName"];
-            $address["lastname"] = $result["lastName"];
-            $address["salutation"] = $result["salutation"];
-            array_push($addresses, $result[0]);
-        }
-        return $addresses;
-    }
-
     /**
      * @param int $offset
      * @param int $limit
@@ -52,5 +40,118 @@ class ArticlePrice extends Resource
         $results = $paginator->getIterator()->getArrayCopy();
 
         return array('data' => $results, 'offset' => $offset, 'limit' => $limit, 'total' => $totalResult);
+    }
+
+    /**
+     * @param int $id
+     * @return array|\Shopware\Models\Article\Price
+     * @throws \Shopware\Components\Api\Exception\ParameterMissingException
+     * @throws \Shopware\Components\Api\Exception\NotFoundException
+     */
+    public function getOne($id)
+    {
+        $this->checkPrivilege('read');
+        if (empty($id)) {
+            throw new ApiException\ParameterMissingException();
+        }
+
+        $builder = $this->queryBuilder();
+        $builder->where('price.id = ?1');
+        $builder->setParameter(1, $id);
+
+        /** @var $articlePrice \Shopware\Models\Article\Price */
+        $articlePrice = $builder->getQuery()->getOneOrNullResult($this->getResultMode());
+        if (!$articlePrice) {
+            throw new ApiException\NotFoundException("Article price by id $id not found");
+        }
+        return $articlePrice;
+    }
+
+    /**
+     * @param  array $params
+     * @return \Shopware\Models\Article\Price
+     * @throws \Shopware\Components\Api\Exception\ValidationException
+     * @throws \Exception
+     */
+    public function create(array $params)
+    {
+        $this->checkPrivilege('create');
+        $params = $this->prepareArticlePriceData($params);
+
+        $articlePrice = new \Shopware\Models\Article\Price();
+        $articlePrice->fromArray($params);
+
+        $violations = $this->getManager()->validate($articlePrice);
+        if ($violations->count() > 0) {
+            throw new ApiException\ValidationException($violations);
+        }
+
+        $this->getManager()->persist($articlePrice);
+        $this->flush();
+        return $result;
+    }
+
+    /**
+    * @param  int $id
+    * @param  array $params
+    * @return \Shopware\Models\Article\Price
+    * @throws \Shopware\Components\Api\Exception\ValidationException
+    * @throws \Shopware\Components\Api\Exception\NotFoundException
+    * @throws \Shopware\Components\Api\Exception\ParameterMissingException
+    * @throws \Shopware\Components\Api\Exception\CustomValidationException
+    */
+    public function update($id, array $params)
+    {
+        $this->checkPrivilege('update');
+        if (empty($id)) {
+            throw new ApiException\ParameterMissingException();
+        }
+
+        /** @var $result \Shopware\Models\Article\Price */
+        $articlePrice = $this->getRepository()->find($id);
+        if (!$articlePrice) {
+            throw new ApiException\NotFoundException("ArticlePrice by id $id not found");
+        }
+
+        $params = $this->prepareArticlePriceData($params, $articlePrice);
+        $articlePrice->fromArray($params);
+
+        $violations = $this->getManager()->validate($articlePrice);
+        if ($violations->count() > 0) {
+            throw new ApiException\ValidationException($violations);
+        }
+
+        $this->flush();
+        return $articlePrice;
+    }
+
+    /**
+     * @param array $params
+     * @param \Shopware\Models\Article\Price $articlePrice
+     * @throws \Shopware\Components\Api\Exception\CustomValidationException
+     * @return mixed
+     */
+    private function prepareArticlePriceData($params, $articlePrice = null)
+    {
+        $defaults = array(
+            'from' => 1
+        );
+
+        if ($articlePrice === null) {
+
+            if (empty($params['articleId'])) {
+                throw new ApiException\CustomValidationException(sprintf("Parameter '%s' is missing", 'articleId'));
+            }
+
+            if (empty($params['customerGroupKey'])) {
+                throw new ApiException\CustomValidationException(sprintf("Parameter '%s' is missing", 'customerGroupKey'));
+            }
+
+            if (!isset($params['from'])) {
+                $params['from'] = $defaults['from'];
+            }
+        }
+
+        return $params;
     }
 }

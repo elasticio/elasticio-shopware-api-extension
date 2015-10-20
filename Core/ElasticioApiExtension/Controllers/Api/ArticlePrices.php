@@ -29,4 +29,34 @@ class Shopware_Controllers_Api_ArticlePrices extends Shopware_Controllers_Api_Re
         $this->View()->assign($result);
         $this->View()->assign('success', true);
     }
+
+    /**
+     * Get one article price by id
+     *
+     * GET /api/articlePrices/{id}
+     */
+    public function getAction()
+    {
+        $id = $this->Request()->getParam('id');
+        $articlePrice = $this->resource->getOne($id);
+        $this->View()->assign('data', $articlePrice);
+        $this->View()->assign('success', true);
+    }
+
+    /**
+     * Create new article price
+     *
+     * POST /api/articlePrices
+     */
+    public function postAction()
+    {
+        $articlePrice = $this->resource->create($this->Request()->getPost());
+        $location = $this->apiBaseUrl . 'articlePrices/' . $articlePrice->getId();
+        $data = array(
+            'id'       => $articlePrice->getId(),
+            'location' => $location
+        );
+        $this->View()->assign(array('success' => true, 'data' => $data));
+        $this->Response()->setHeader('Location', $location);
+    }
 }
