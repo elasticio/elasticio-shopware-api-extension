@@ -48,6 +48,7 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
 
     public function enable()
     {
+        $this->addUserUpdateTime();
         return true;
     }
 
@@ -60,6 +61,11 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
         }
 
         return true;
+    }
+
+    private function addUserUpdateTime(){
+        //$sql = "alter table s_user add column updatedOn TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP";
+        //Shopware()->Db()->query($sql);
     }
 
     /**
@@ -80,6 +86,11 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
         $this->subscribeEvent(
             'Enlight_Controller_Dispatcher_ControllerPath_Api_CustomersWithoutExternalId',
             'onGetCustomersWithoutExternalIdApiController'
+        );
+
+        $this->subscribeEvent(
+            'Enlight_Controller_Dispatcher_ControllerPath_Api_UpdatedCustomers',
+            'onGetUpdatedCustomersApiController'
         );
 
         $this->subscribeEvent(
@@ -121,6 +132,11 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
             'Shopware\Components',
             $this->Path() . 'Components/'
         );
+
+        $this->Application()->Loader()->registerNamespace(
+            'Shopware\Models',
+            $this->Path() . 'Models/'
+        );
     }
 
     public function onGetArticlePricesApiController()
@@ -131,6 +147,11 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
     public function onGetCustomersWithoutExternalIdApiController()
     {
         return $this->Path() . 'Controllers/Api/CustomersWithoutExternalId.php';
+    }
+
+    public function onGetUpdatedCustomersApiController()
+    {
+        return $this->Path() . 'Controllers/Api/UpdatedCustomers.php';
     }
 
     public function onGetCustomerGroupByKeyApiController()
