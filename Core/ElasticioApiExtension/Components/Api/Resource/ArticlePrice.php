@@ -160,10 +160,6 @@ class ArticlePrice extends Resource
                 throw new ApiException\CustomValidationException(sprintf("Parameter '%s' is missing", 'articleId'));
             }
 
-            if (empty($params['articleDetailsId'])) {
-                throw new ApiException\CustomValidationException(sprintf("Parameter '%s' is missing", 'articleDetailsId'));
-            }
-
             if (empty($params['customerGroupKey'])) {
                 throw new ApiException\CustomValidationException(sprintf("Parameter '%s' is missing", 'customerGroupKey'));
             }
@@ -178,11 +174,16 @@ class ArticlePrice extends Resource
             $params['article'] = Shopware()->Models()->find('Shopware\Models\Article\Article', $params['articleId']);
             if (!$params['article']) {
                 throw new ApiException\CustomValidationException(sprintf("Article by id %s not found", $params['articleId']));
+            } else {
+                if (!isset($params['articleDetailsId'])) {
+                    $params['articleDetailsId'] = $params['article']->getMainDetail()->getId();
+                    $params['detail'] = $params['article']->getMainDetail();
+                }
             }
         }
 
         // find detail
-        if (isset($params['articleDetailsId'])) {
+        if (isset($params['articleDetailsId']) && !isset($params['detail'])) {
             $params['detail'] = Shopware()->Models()->find('Shopware\Models\Article\Detail', $params['articleDetailsId']);
             if (!$params['detail']) {
                 throw new ApiException\CustomValidationException(sprintf("Article Detail by id %s not found", $params['articleDetailsId']));
