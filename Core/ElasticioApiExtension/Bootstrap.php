@@ -4,6 +4,14 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
 {
     const COLUMN_PREFIX = 'elasticio';
 
+    private $PLUGIN_API_CONTROLLERS = array(
+        'ArticlePrices',
+        'CustomersWithoutExternalId',
+        'UpdatedCustomers',
+        'CustomerGroupByKey',
+        'Countries'
+    );
+
     private function debugInfo($msg) {
         error_log($msg);
     }
@@ -48,7 +56,7 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
 
     public function enable()
     {
-        $this->addUserUpdateTime();
+        $this->addUserColumns();
         return true;
     }
 
@@ -63,9 +71,15 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
         return true;
     }
 
-    private function addUserUpdateTime(){
-        //$sql = "alter table s_user add column updatedOn TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP";
-        //Shopware()->Db()->query($sql);
+    private function addUserColumns() {
+
+        $sql = "SHOW COLUMNS FROM s_user LIKE 'updatedOn'";
+        $updatedOnColumn = Shopware()->Db()->fetchRow($sql);
+
+        if (empty($updatedOnColumn)) {
+            $sql = "alter table s_user add column updatedOn TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP";
+            Shopware()->Db()->query($sql);
+        }
     }
 
     /**
@@ -78,30 +92,12 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
             'onFrontStartDispatch'
         );
 
-        $this->subscribeEvent(
-            'Enlight_Controller_Dispatcher_ControllerPath_Api_ArticlePrices',
-            'onGetArticlePricesApiController'
-        );
-
-        $this->subscribeEvent(
-            'Enlight_Controller_Dispatcher_ControllerPath_Api_CustomersWithoutExternalId',
-            'onGetCustomersWithoutExternalIdApiController'
-        );
-
-        $this->subscribeEvent(
-            'Enlight_Controller_Dispatcher_ControllerPath_Api_UpdatedCustomers',
-            'onGetUpdatedCustomersApiController'
-        );
-
-        $this->subscribeEvent(
-            'Enlight_Controller_Dispatcher_ControllerPath_Api_CustomerGroupByKey',
-            'onGetCustomerGroupByKeyApiController'
-        );
-
-        $this->subscribeEvent(
-            'Enlight_Controller_Dispatcher_ControllerPath_Api_Countries',
-            'onGetCountriesApiController'
-        );
+        foreach ($this->PLUGIN_API_CONTROLLERS as $controllerName) {
+            $this->subscribeEvent(
+                "Enlight_Controller_Dispatcher_ControllerPath_Api_{$controllerName}",
+                "onGetApiController{$controllerName}"
+            );
+        }
     }
 
     private function addAttributes() {
@@ -139,27 +135,27 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
         );
     }
 
-    public function onGetArticlePricesApiController()
+    public function onGetApiControllerArticlePrices()
     {
         return $this->Path() . 'Controllers/Api/ArticlePrices.php';
     }
 
-    public function onGetCustomerGroupByKeyApiController()
+    public function onGetApiControllerCustomerGroupByKey()
     {
         return $this->Path() . 'Controllers/Api/CustomerGroupByKey.php';
     }
 
-    public function onGetCustomersWithoutExternalIdApiController()
+    public function onGetApiControllerCustomersWithoutExternalId()
     {
         return $this->Path() . 'Controllers/Api/CustomersWithoutExternalId.php';
     }
 
-    public function onGetUpdatedCustomersApiController()
+    public function onGetApiControllerUpdatedCustomers()
     {
         return $this->Path() . 'Controllers/Api/UpdatedCustomers.php';
     }
 
-    public function onGetCountriesApiController()
+    public function onGetApiControllerCountries()
     {
         return $this->Path() . 'Controllers/Api/Countries.php';
     }

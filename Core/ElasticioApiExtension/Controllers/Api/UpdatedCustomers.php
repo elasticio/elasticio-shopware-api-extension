@@ -37,7 +37,7 @@ class Shopware_Controllers_Api_UpdatedCustomers extends Shopware_Controllers_Api
 
             // add updatedOn to each customer
             foreach ($result['data'] as &$customer) {
-                $customer['updatedOn'] = $updatedUsers[$customer['id']]['updatedOn'];
+                $customer['updatedOn'] = intval($updatedUsers[$customer['id']]['updatedOn']);
             }
         }
 
@@ -47,7 +47,7 @@ class Shopware_Controllers_Api_UpdatedCustomers extends Shopware_Controllers_Api
 
     private function _getUpdatedUsers($updatedSince, $offset, $limit)
     {
-        $sql = "SELECT id, updatedOn FROM s_user "
+        $sql = "SELECT id, UNIX_TIMESTAMP(updatedOn) as updatedOn FROM s_user "
              . "WHERE UNIX_TIMESTAMP(updatedOn) > :updatedSince "
              . "ORDER BY updatedOn ASC "
              . "LIMIT :offset,:limit ";
