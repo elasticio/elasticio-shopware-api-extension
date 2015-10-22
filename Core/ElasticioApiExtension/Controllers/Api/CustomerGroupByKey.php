@@ -36,7 +36,8 @@ class Shopware_Controllers_Api_CustomerGroupByKey extends Shopware_Controllers_A
                 ->select('customerGroup', 'd')
                 ->leftJoin('customerGroup.discounts', 'd')
                 ->where('customerGroup.key = :key')
-                ->setParameter(':key', $key);
+                ->setParameter(':key', $key)
+                ->setMaxResults(1);
 
         $query = $builder->getQuery();
         $query->setHydrationMode($customerGroupResource->getResultMode());

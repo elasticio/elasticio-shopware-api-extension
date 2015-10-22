@@ -97,6 +97,11 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
             'Enlight_Controller_Dispatcher_ControllerPath_Api_CustomerGroupByKey',
             'onGetCustomerGroupByKeyApiController'
         );
+
+        $this->subscribeEvent(
+            'Enlight_Controller_Dispatcher_ControllerPath_Api_Countries',
+            'onGetCountriesApiController'
+        );
     }
 
     private function addAttributes() {
@@ -132,16 +137,16 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
             'Shopware\Components',
             $this->Path() . 'Components/'
         );
-
-        $this->Application()->Loader()->registerNamespace(
-            'Shopware\Models',
-            $this->Path() . 'Models/'
-        );
     }
 
     public function onGetArticlePricesApiController()
     {
         return $this->Path() . 'Controllers/Api/ArticlePrices.php';
+    }
+
+    public function onGetCustomerGroupByKeyApiController()
+    {
+        return $this->Path() . 'Controllers/Api/CustomerGroupByKey.php';
     }
 
     public function onGetCustomersWithoutExternalIdApiController()
@@ -154,9 +159,8 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
         return $this->Path() . 'Controllers/Api/UpdatedCustomers.php';
     }
 
-    public function onGetCustomerGroupByKeyApiController()
+    public function onGetCountriesApiController()
     {
-        return $this->Path() . 'Controllers/Api/CustomerGroupByKey.php';
+        return $this->Path() . 'Controllers/Api/Countries.php';
     }
-
 }
