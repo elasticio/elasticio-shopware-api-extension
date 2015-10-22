@@ -26,29 +26,46 @@ class Shopware_Controllers_Api_UpdatedCustomers extends Shopware_Controllers_Api
             // just query all customers
             $result = $this->resource->getList($offset, $limit, $filter, $sort);
         } else {
-            // query only customers with ids from updated list
-            $customerIds = $this->_getUpdatedCustomerIds($updatedSince, $offset, $limit);
-            array_push($filter, array('property'   => 'id', 'value' => $customerIds));
-            // set offset to 0
+            // query only updated customer ids & data
+            $updatedUsers = $this->_getUpdatedUsers($updatedSince, $offset, $limit);
+
+            // put customer ids to filter
+            array_push($filter, array('property' => 'id', 'value' => array_keys($updatedUsers)));
+
+            // query customers using that filter
             $result = $this->resource->getList(0, $limit, $filter, $sort);
+
+            // add updatedOn to each customer
+            foreach ($result['data'] as &$customer) {
+                $customer['updatedOn'] = $updatedUsers[$customer['id']]['updatedOn'];
+            }
         }
 
         $this->View()->assign($result);
         $this->View()->assign('success', true);
     }
 
-    private function _getUpdatedCustomerIds($updatedSince, $offset, $limit)
+    private function _getUpdatedUsers($updatedSince, $offset, $limit)
     {
-        $sql = "SELECT id FROM s_user "
+        $sql = "SELECT id, updatedOn FROM s_user "
              . "WHERE UNIX_TIMESTAMP(updatedOn) > :updatedSince "
              . "ORDER BY updatedOn ASC "
              . "LIMIT :offset,:limit ";
+
 
         $statement = Shopware()->Db()->prepare($sql);
         $statement->bindValue(':updatedSince', $updatedSince, \PDO::PARAM_INT);
         $statement->bindValue(':offset', $offset, \PDO::PARAM_INT);
         $statement->bindValue(':limit', $limit, \PDO::PARAM_INT);
         $statement->execute();
-        return $statement->fetchAll(\PDO::FETCH_COLUMN);
+        $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
+
+        $result = array();
+        foreach ($data as $row) {
+            $result[$row['id']] = array(
+                'updatedOn' => $row['updatedOn']
+            );
+        }
+        return $result;
     }
 }
