@@ -58,7 +58,7 @@ class Shopware_Controllers_Api_UpdatedCustomers extends Shopware_Controllers_Api
         $sql = "SELECT u.id, UNIX_TIMESTAMP(u.updatedOn) as updatedOn "
              . "FROM s_user u "
              . $join
-             . "WHERE UNIX_TIMESTAMP(u.updatedOn) >= :updatedSince "
+             . "WHERE UNIX_TIMESTAMP(u.updatedOn) > :updatedSince "
              . "ORDER BY u.updatedOn ASC "
              . "LIMIT :offset, :limit ";
 
