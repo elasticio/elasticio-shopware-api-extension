@@ -63,7 +63,9 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
     public function uninstall()
     {
         try {
-            $this->removeAttributes();
+            // commented because we don't want to lose externalIds
+            // when reinstall plugin
+            // $this->removeAttributes();
         } catch (\Exception $e) {
             // noting to do here.
         }
@@ -105,7 +107,7 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
             's_user_attributes',
             self::COLUMN_PREFIX,
             'external_id',
-            'INT(11)',
+            'VARCHAR(255)',
             true,
             null
         );
