@@ -9,7 +9,8 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
         'CustomersWithoutExternalId',
         'UpdatedCustomers',
         'CustomerGroupByKey',
-        'Countries'
+        'Countries',
+        'NewOrders'
     );
 
     private function debugInfo($msg) {
@@ -79,7 +80,7 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
         $updatedOnColumn = Shopware()->Db()->fetchRow($sql);
 
         if (empty($updatedOnColumn)) {
-            $sql = "alter table s_user add column updatedOn TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP";
+            $sql = "ALTER TABLE s_user ADD COLUMN updatedOn TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP";
             Shopware()->Db()->query($sql);
         }
     }
@@ -160,5 +161,10 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
     public function onGetApiControllerCountries()
     {
         return $this->Path() . 'Controllers/Api/Countries.php';
+    }
+
+    public function onGetApiControllerNewOrders()
+    {
+        return $this->Path() . 'Controllers/Api/NewOrders.php';
     }
 }
