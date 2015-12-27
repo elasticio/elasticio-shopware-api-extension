@@ -10,16 +10,13 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
         'UpdatedCustomers',
         'CustomerGroupByKey',
         'Countries',
-        'NewOrders'
+        'NewOrders',
+        'OrdersByExternalId'
     );
-
-    private function debugInfo($msg) {
-        error_log($msg);
-    }
 
     public function getVersion()
     {
-        return '0.0.0';
+        return '1.0.0';
     }
 
     public function getLabel()
@@ -113,8 +110,18 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
             null
         );
 
+        $this->Application()->Models()->addAttribute(
+            's_order_attributes',
+            self::COLUMN_PREFIX,
+            'external_id',
+            'VARCHAR(255)',
+            true,
+            null
+        );
+
         $this->Application()->Models()->generateAttributeModels(array(
-            's_user_attributes'
+            's_user_attributes',
+            's_order_attributes'
         ));
     }
 
@@ -125,8 +132,15 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
             'external_id'
         );
 
+        $this->Application()->Models()->removeAttribute(
+            's_order_attributes',
+            self::COLUMN_PREFIX,
+            'external_id'
+        );
+
         $this->Application()->Models()->generateAttributeModels(array(
-            's_user_attributes'
+            's_user_attributes',
+            's_order_attributes'
         ));
     }
 
@@ -166,5 +180,10 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
     public function onGetApiControllerNewOrders()
     {
         return $this->Path() . 'Controllers/Api/NewOrders.php';
+    }
+
+    public function onGetApiControllerOrdersByExternalId()
+    {
+        return $this->Path() . 'Controllers/Api/OrdersByExternalId.php';
     }
 }
