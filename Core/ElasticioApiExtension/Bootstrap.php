@@ -11,7 +11,8 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
         'CustomerGroupByKey',
         'Countries',
         'NewOrders',
-        'OrdersByExternalId'
+        'OrdersByExternalId',
+        'CustomersByExternalId'
     );
 
     public function getVersion()
@@ -185,5 +186,10 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
     public function onGetApiControllerOrdersByExternalId()
     {
         return $this->Path() . 'Controllers/Api/OrdersByExternalId.php';
+    }
+
+    public function onGetApiControllerCustomersByExternalId()
+    {
+        return $this->Path() . 'Controllers/Api/CustomersByExternalId.php';
     }
 }
