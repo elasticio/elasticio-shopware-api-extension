@@ -7,6 +7,7 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
     private $PLUGIN_API_CONTROLLERS = array(
         'ArticlePrices',
         'CustomersWithoutExternalId',
+        'OrdersWithoutExternalId',
         'UpdatedCustomers',
         'CustomerGroupByKey',
         'Countries',
@@ -17,7 +18,7 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
 
     public function getVersion()
     {
-        return '1.0.1';
+        return '1.0.2';
     }
 
     public function getLabel()
@@ -166,6 +167,11 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
     public function onGetApiControllerCustomersWithoutExternalId()
     {
         return $this->Path() . 'Controllers/Api/CustomersWithoutExternalId.php';
+    }
+
+    public function onGetApiControllerOrdersWithoutExternalId()
+    {
+        return $this->Path() . 'Controllers/Api/OrdersWithoutExternalId.php';
     }
 
     public function onGetApiControllerUpdatedCustomers()
