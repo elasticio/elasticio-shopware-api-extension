@@ -11,7 +11,7 @@
 * ``/api/CustomersByExternalId``: CRUD customers by a given ``external_id``
 
 # Install the plugin
-Download `ElasticioApiExtension.zip` file and install it on you Shopware instance using [Plugin Manager](http://en.community.shopware.com/_detail_1167.html).
+Download [ElasticioApiExtension.zip](ElasticioApiExtension.zip) file and install it on you Shopware instance using [Plugin Manager](http://en.community.shopware.com/_detail_1167.html).
 
 
 # Building the plugin
