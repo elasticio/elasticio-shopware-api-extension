@@ -10,10 +10,14 @@
 * ``/api/OrdersByExternalId``: CRUD orders by a given ``external_id``
 * ``/api/CustomersByExternalId``: CRUD customers by a given ``external_id``
 
+# Install the plugin
+Download `ElasticioApiExtension.zip` file and install it on you Shopware instance using [Plugin Manager](http://en.community.shopware.com/_detail_1167.html).
+
+
 # Building the plugin
 
-To build the plugin archive execute the following command. The resulting zip can be uploaded into your Shopware instance.
+To build the plugin clone this repo and execute the following command in root direcroty. The resulting `ElasticioApiExtension.zip` can be installed on your Shopware instance.
 
 ````sh
-build.sh
+./build.sh
 ````
