@@ -1,5 +1,7 @@
 <?php
 
+use Shopware\Bundle\AttributeBundle\Service\CrudService;
+
 class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Components_Plugin_Bootstrap
 {
     const COLUMN_PREFIX = 'elasticio';
@@ -103,7 +105,7 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
     }
 
     private function addAttributes() {
-        $this->Application()->Models()->addAttribute(
+        CrudService::update(
             's_user_attributes',
             self::COLUMN_PREFIX,
             'external_id',
@@ -112,7 +114,7 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
             null
         );
 
-        $this->Application()->Models()->addAttribute(
+        CrudService::update(
             's_order_attributes',
             self::COLUMN_PREFIX,
             'external_id',
@@ -121,29 +123,29 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
             null
         );
 
-        $this->Application()->Models()->generateAttributeModels(array(
+        CrudService::update(array(
             's_user_attributes',
             's_order_attributes'
         ));
     }
 
     private function removeAttributes() {
-        $this->Application()->Models()->removeAttribute(
+        CrudService::update(
             's_user_attributes',
             self::COLUMN_PREFIX,
             'external_id'
         );
 
-        $this->Application()->Models()->removeAttribute(
+        CrudService::update(
             's_order_attributes',
             self::COLUMN_PREFIX,
             'external_id'
         );
 
-        $this->Application()->Models()->generateAttributeModels(array(
+        CrudService::update(
             's_user_attributes',
             's_order_attributes'
-        ));
+        );
     }
 
     public function onFrontStartDispatch(Enlight_Event_EventArgs $args)
