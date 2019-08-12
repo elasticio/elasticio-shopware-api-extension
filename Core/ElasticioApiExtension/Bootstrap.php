@@ -1,6 +1,7 @@
 <?php
 
 use Shopware\Bundle\AttributeBundle\Service\CrudService;
+use Shopware\Bundle\AttributeBundle\Service\TypeMapping;
 
 class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Components_Plugin_Bootstrap
 {
@@ -51,7 +52,7 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
 
     public function install()
     {
-        $this->addAttributes();
+//        $this->addAttributes();
         $this->subscribeEvents();
         return true;
     }
@@ -104,8 +105,52 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
         }
     }
 
+    public function addAttribute($table, $prefix, $column, $type, $nullable = true, $default = null)
+    {
+        if (empty($table)) {
+            throw new \InvalidArgumentException('No table name passed');
+        }
+        if (strpos($table, '_attributes') === false) {
+            throw new \InvalidArgumentException('The passed table name is no attribute table');
+        }
+        if (empty($prefix)) {
+            throw new \InvalidArgumentException('No column prefix passed');
+        }
+        if (empty($column)) {
+            throw new \InvalidArgumentException('No column name passed');
+        }
+        if (empty($type)) {
+            throw new \InvalidArgumentException('No column type passed');
+        }
+        $type = $this->convertColumnType($type);
+        $prefixedColumn = $prefix . '_' . $column;
+        /** @var CrudService $crudService */
+        $crudService = Shopware()->Container()->get('shopware_attribute.crud_service');
+        $crudService->update($table, $prefixedColumn, $type, [], null, false, $default);
+    }
+
+    public function removeAttribute($table, $prefix, $column)
+    {
+        if (empty($table)) {
+            throw new \InvalidArgumentException('No table name passed');
+        }
+        if (strpos($table, '_attributes') === false) {
+            throw new \InvalidArgumentException('The passed table name is no attribute table');
+        }
+        if (empty($prefix)) {
+            throw new \InvalidArgumentException('No column prefix passed');
+        }
+        if (empty($column)) {
+            throw new \InvalidArgumentException('No column name passed');
+        }
+        $prefixedColumn = $prefix . '_' . $column;
+        /** @var CrudService $crudService */
+        $crudService = Shopware()->Container()->get('shopware_attribute.crud_service');
+        $crudService->delete($table, $prefixedColumn, false);
+    }
+
     private function addAttributes() {
-        CrudService::update(
+        $this->addAttribute(
             's_user_attributes',
             self::COLUMN_PREFIX,
             'external_id',
@@ -114,7 +159,7 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
             null
         );
 
-        CrudService::update(
+        $this->addAttribute(
             's_order_attributes',
             self::COLUMN_PREFIX,
             'external_id',
@@ -123,29 +168,29 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
             null
         );
 
-        CrudService::update(array(
+        $this->Application()->Models()->generateAttributeModels(array(
             's_user_attributes',
             's_order_attributes'
         ));
     }
 
     private function removeAttributes() {
-        CrudService::update(
+        $this->removeAttribute(
             's_user_attributes',
             self::COLUMN_PREFIX,
             'external_id'
         );
 
-        CrudService::update(
+        $this->removeAttribute(
             's_order_attributes',
             self::COLUMN_PREFIX,
             'external_id'
         );
 
-        CrudService::update(
+        $this->Application()->Models()->generateAttributeModels(array(
             's_user_attributes',
             's_order_attributes'
-        );
+        ));
     }
 
     public function onFrontStartDispatch(Enlight_Event_EventArgs $args)
@@ -199,5 +244,35 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
     public function onGetApiControllerCustomersByExternalId()
     {
         return $this->Path() . 'Controllers/Api/CustomersByExternalId.php';
+    }
+
+    private function convertColumnType($type)
+    {
+        switch (true) {
+            case (bool) preg_match('#\b(char\b|varchar)\b#i', $type):
+                $type = TypeMapping::TYPE_STRING;
+                break;
+            case (bool) preg_match('#\b(text|blob|array|simple_array|json_array|object|binary|guid)\b#i', $type):
+                $type = TypeMapping::TYPE_TEXT;
+                break;
+            case (bool) preg_match('#\b(datetime|timestamp)\b#i', $type):
+                $type = TypeMapping::TYPE_DATETIME;
+                break;
+            case (bool) preg_match('#\b(date|datetimetz)\b#i', $type):
+                $type = TypeMapping::TYPE_DATE;
+                break;
+            case (bool) preg_match('#\b(int|integer|smallint|tinyint|mediumint|bigint)\b#i', $type):
+                $type = TypeMapping::TYPE_INTEGER;
+                break;
+            case (bool) preg_match('#\b(float|double|decimal|dec|fixed|numeric)\b#i', $type):
+                $type = TypeMapping::TYPE_FLOAT;
+                break;
+            case (bool) preg_match('#\b(bool|boolean)\b#i', $type):
+                $type = TypeMapping::TYPE_BOOLEAN;
+                break;
+            default:
+                throw new \InvalidArgumentException(sprintf('Column type "%s" cannot be converted.', $type));
+        }
+        return $type;
     }
 }
