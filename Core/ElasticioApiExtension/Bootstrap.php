@@ -52,7 +52,7 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
 
     public function install()
     {
-//        $this->addAttributes();
+        $this->addAttributes();
         $this->subscribeEvents();
         return true;
     }
@@ -68,7 +68,7 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
         try {
             // commented because we don't want to lose externalIds
             // when reinstall plugin
-            // $this->removeAttributes();
+//             $this->removeAttributes();
         } catch (\Exception $e) {
             // noting to do here.
         }

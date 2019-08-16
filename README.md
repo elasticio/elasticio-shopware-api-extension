@@ -4,7 +4,7 @@
 * ``/api/CustomersWithoutExternalId``: Retrieve customers that have no ``external_id`` property set
 * ``/api/OrdersWithoutExternalId``: Retrieve orders that have no ``external_id`` property set
 * ``/api/UpdatedCustomers``: Retrieve customers updates after a given date
-* ``/api/CustomerGroupByKey``: Retrieve customer groups by a given group key
+* ``/api/CustomerGroupByKey/${groupKey}``: Retrieve customer groups by a given group key
 * ``/api/Countries``: Retrieve all countries, retrieve country by id
 * ``/api/NewOrders``: Retrieve orders created after a given date
 * ``/api/OrdersByExternalId``: CRUD orders by a given ``external_id``
