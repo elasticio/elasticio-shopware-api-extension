@@ -8,6 +8,8 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
     const COLUMN_PREFIX = 'elasticio';
 
     private $PLUGIN_API_CONTROLLERS = array(
+        'Tax',
+        'Supplier',
         'ArticlePrices',
         'CustomersWithoutExternalId',
         'OrdersWithoutExternalId',
@@ -21,7 +23,7 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
 
     public function getVersion()
     {
-        return '1.0.2';
+        return '1.0.4';
     }
 
     public function getLabel()
@@ -244,6 +246,16 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
     public function onGetApiControllerCustomersByExternalId()
     {
         return $this->Path() . 'Controllers/Api/CustomersByExternalId.php';
+    }
+    
+    public function onGetApiControllerTax()
+    {
+        return $this->Path() . 'Controllers/Api/Tax.php';
+    }
+    
+    public function onGetApiControllerSupplier()
+    {
+        return $this->Path() . 'Controllers/Api/Supplier.php';
     }
 
     private function convertColumnType($type)

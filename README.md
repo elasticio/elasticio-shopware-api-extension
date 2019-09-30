@@ -1,6 +1,6 @@
 # Shopware REST API extenstions
 
-* ``/api/ArticlePrices``: Create/Raad/Update article prices
+* ``/api/ArticlePrices``: Create/Read/Update article prices
 * ``/api/CustomersWithoutExternalId``: Retrieve customers that have no ``external_id`` property set
 * ``/api/OrdersWithoutExternalId``: Retrieve orders that have no ``external_id`` property set
 * ``/api/UpdatedCustomers``: Retrieve customers updates after a given date
@@ -9,6 +9,8 @@
 * ``/api/NewOrders``: Retrieve orders created after a given date
 * ``/api/OrdersByExternalId``: CRUD orders by a given ``external_id``
 * ``/api/CustomersByExternalId``: CRUD customers by a given ``external_id``
+* ``/api/Tax``: Retrieve all taxes, retrieve tax by id
+* ``/api/Supplier``: Retrieve all suppliers, retrieve supplier by id
 
 # Install the plugin
 Download [ElasticioApiExtension.zip](ElasticioApiExtension.zip) file and install it on you Shopware instance using [Plugin Manager](http://en.community.shopware.com/_detail_1167.html).
