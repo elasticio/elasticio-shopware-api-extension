@@ -18,12 +18,14 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
         'Countries',
         'NewOrders',
         'OrdersByExternalId',
-        'CustomersByExternalId'
+        'CustomersByExternalId',
+        'ArticlesListId',
+        'CustomersListId'
     );
 
     public function getVersion()
     {
-        return '1.0.4';
+        return '1.0.5';
     }
 
     public function getLabel()
@@ -256,6 +258,16 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
     public function onGetApiControllerSupplier()
     {
         return $this->Path() . 'Controllers/Api/Supplier.php';
+    }
+
+    public function onGetApiControllerArticlesListId()
+    {
+        return $this->Path() . 'Controllers/Api/ArticlesListId.php';
+    }
+
+    public function onGetApiControllerCustomersListId()
+    {
+        return $this->Path() . 'Controllers/Api/CustomersListId.php';
     }
 
     private function convertColumnType($type)
