@@ -2,8 +2,20 @@
 
 use Shopware\Components\Api\Exception as ApiException;
 
-class Shopware_Controllers_Api_CustomerGroupByKey extends Shopware_Controllers_Api_CustomerGroups
+class Shopware_Controllers_Api_CustomerGroupByKey extends Shopware_Controllers_Api_Rest
 {
+
+    /**
+     * @var Shopware\Components\Api\Resource\ArticlePrice
+     */
+    protected $resource = null;
+
+    public function init()
+    {
+        $this->resource = \Shopware\Components\Api\Manager::getResource('customerGroup');
+    }
+
+
     /**
      * Get one customergroup by key
      *
