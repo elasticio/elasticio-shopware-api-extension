@@ -25,7 +25,7 @@ class Shopware_Plugins_Core_ElasticioApiExtension_Bootstrap extends Shopware_Com
 
     public function getVersion()
     {
-        return '1.0.5';
+        return '1.0.6';
     }
 
     public function getLabel()

@@ -1,6 +1,6 @@
 <?php
 
-class Shopware_Controllers_Api_CustomersListID extends Shopware_Controllers_Api_Rest
+class Shopware_Controllers_Api_CustomersListId extends Shopware_Controllers_Api_Rest
 {
     /**
      * @var Shopware\Components\Api\Resource\Customer
@@ -9,13 +9,13 @@ class Shopware_Controllers_Api_CustomersListID extends Shopware_Controllers_Api_
 
     public function init()
     {
-        $this->resource = \Shopware\Components\Api\Manager::getResource('customersListId');
+        $this->resource = \Shopware\Components\Api\Manager::getResource('CustomersListId');
     }
 
     /**
-     * Get list ID of articles
+     * Get list ID of customersListId
      *
-     * GET /api/customersListId/
+     * GET /api/CustomersListId/
      */
     public function indexAction()
     {
@@ -27,6 +27,21 @@ class Shopware_Controllers_Api_CustomersListID extends Shopware_Controllers_Api_
         $result = $this->resource->getList($offset, $limit, $filter, $sort);
 
         $this->View()->assign($result);
+        $this->View()->assign('success', true);
+    }
+
+    /**
+     * Get one customer
+     *
+     * GET /api/CustomersListId/{id}
+     */
+    public function getAction()
+    {
+        $id = $this->Request()->getParam('id');
+
+        $user = $this->resource->getOne($id);
+
+        $this->View()->assign('data', $user);
         $this->View()->assign('success', true);
     }
 }

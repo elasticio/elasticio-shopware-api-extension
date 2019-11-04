@@ -9,13 +9,13 @@ class Shopware_Controllers_Api_ArticlesListID extends Shopware_Controllers_Api_R
 
     public function init()
     {
-        $this->resource = \Shopware\Components\Api\Manager::getResource('articlesListId');
+        $this->resource = \Shopware\Components\Api\Manager::getResource('ArticlesListID');
     }
 
     /**
      * Get list ID of articles
      *
-     * GET /api/articlesListID/
+     * GET /api/ArticlesListID/
      */
     public function indexAction()
     {
@@ -29,5 +29,19 @@ class Shopware_Controllers_Api_ArticlesListID extends Shopware_Controllers_Api_R
         $this->View()->assign($result);
         $this->View()->assign('success', true);
     }
+    
+    /**
+     * Get one article
+     *
+     * GET /api/ArticlesListID/{id}
+     */
+    public function getAction()
+    {
+        $id = $this->Request()->getParam('id');
 
+        $user = $this->resource->getOne($id);
+
+        $this->View()->assign('data', $user);
+        $this->View()->assign('success', true);
+    }
 }

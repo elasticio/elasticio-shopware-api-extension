@@ -14,6 +14,35 @@ class ArticlesListID extends Resource
     }
 
     /**
+     * @param int $id
+     * @return array|\Shopware\Models\Tax\Tax
+     * @throws \Shopware\Components\Api\Exception\ParameterMissingException
+     * @throws \Shopware\Components\Api\Exception\NotFoundException
+     */
+    public function getOne($id)
+    {
+        $this->checkPrivilege('read');
+
+        if (empty($id)) {
+            throw new ApiException\ParameterMissingException();
+        }
+
+        $builder = $this->getRepository()
+            ->createQueryBuilder('Detail')
+            ->select('Detail.number')
+            ->where('Detail.id = ?1')
+            ->setParameter(1, $id);
+
+        $user = $builder->getQuery()->getOneOrNullResult($this->getResultMode());
+
+        if (!$user) {
+            throw new ApiException\NotFoundException("Article by id $id not found");
+        }
+
+        return $user;
+    }
+
+    /**
      * @param int $offset
      * @param int $limit
      * @param array $criteria
@@ -26,7 +55,7 @@ class ArticlesListID extends Resource
 
         $builder = $this->getRepository()->createQueryBuilder('Detail');
         
-        $builder->select('Detail.number');
+        $builder->select(['Detail.id', 'Detail.number']);
         $builder->addFilter($criteria);
         $builder->addOrderBy($orderBy);
         $builder->setFirstResult($offset)->setMaxResults($limit);

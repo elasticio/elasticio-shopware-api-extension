@@ -13,6 +13,35 @@ class CustomersListId extends Resource
     }
     
     /**
+     * @param int $id
+     * @return array|\Shopware\Models\Tax\Tax
+     * @throws \Shopware\Components\Api\Exception\ParameterMissingException
+     * @throws \Shopware\Components\Api\Exception\NotFoundException
+     */
+    public function getOne($id)
+    {
+        $this->checkPrivilege('read');
+
+        if (empty($id)) {
+            throw new ApiException\ParameterMissingException();
+        }
+
+        $builder = $this->getRepository()
+            ->createQueryBuilder('Customer')
+            ->select('Customer.number')
+            ->where('Detail.id = ?1')
+            ->setParameter(1, $id);
+
+        $user = $builder->getQuery()->getOneOrNullResult($this->getResultMode());
+
+        if (!$user) {
+            throw new ApiException\NotFoundException("Customer by id $id not found");
+        }
+
+        return $user;
+    }
+    
+    /**
      * @param int $offset
      * @param int $limit
      * @param array $criteria
@@ -25,7 +54,7 @@ class CustomersListId extends Resource
 
         $builder = $this->getRepository()->createQueryBuilder('Customer');
 
-        $builder->select('Customer.number');
+        $builder->select(['Customer.id', 'Customer.number']);
         $builder->addFilter($criteria);
         $builder->addOrderBy($orderBy);
         $builder->setFirstResult($offset)->setMaxResults($limit);
